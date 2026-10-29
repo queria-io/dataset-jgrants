@@ -1,0 +1,20 @@
+name: Build
+
+# 公開せずにパイプラインと dbt build だけを回す。J グランツの API の形が変わったときに
+# Sync より先に気づくため。初回の全件は 1 時間かかるので、前回公開した詳細を使い回す
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+      - uses: astral-sh/setup-uv@v7
+      - run: uv sync
+      - run: uv run python -c "import main; main.download_jgrants()"
+      - run: uv run dbt build --profiles-dir ci

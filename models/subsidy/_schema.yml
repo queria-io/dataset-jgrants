@@ -1,0 +1,47 @@
+version: 2
+
+models:
+- name: details
+  description: J グランツの補助金詳細（V2）の JSON。1 行が 1 補助金。添付はファイル名だけ。
+  access: public
+  columns:
+  - name: id
+    data_tests: [unique, not_null]
+  - name: detail_json
+    data_tests: [not_null]
+- name: subsidies
+  description: J グランツに載っている補助金。1 行が 1 補助金。
+  access: public
+  columns:
+  - name: subsidy_id
+    data_tests: [unique, not_null]
+  - name: title
+    data_tests: [not_null]
+- name: rounds
+  description: 補助金の募集回。1 行が 1 回。
+  access: public
+  columns:
+  - name: round_id
+    data_tests: [unique, not_null]
+  - name: subsidy_id
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('subsidies')
+          field: subsidy_id
+- name: round_areas
+  description: 募集回の対象地域。1 行が 1 回の 1 地域。
+  access: public
+  columns:
+  - name: round_id
+    data_tests: [not_null]
+  - name: area_name
+    data_tests: [not_null]
+  - name: area_level
+    # 原典に無かった地域の書き方が出てきたら止める
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values: [national, prefecture, region, overseas]

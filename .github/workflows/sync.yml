@@ -1,0 +1,23 @@
+name: Sync
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+  schedule:
+    - cron: "0 19 * * *" # 毎日 04:00 JST
+  workflow_dispatch:
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    uses: queria-io/dataset-shared/.github/workflows/sync.yml@main
+    with:
+      dataset_name: jgrants
+      # 初回の全件取得（詳細 3,800 件を 1 秒おき）が 1 時間を超える
+      timeout_minutes: 120
+    secrets: inherit
