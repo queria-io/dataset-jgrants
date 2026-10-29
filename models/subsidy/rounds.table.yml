@@ -1,0 +1,40 @@
+schema: subsidy
+name: rounds
+title: J グランツの補助金の募集回
+description: |-
+  J グランツの補助金の募集回。1 行が 1 補助金の 1 回で、補助金ごとの受付期間・事業完了期限・対象地域を持つ。
+  多くの補助金は 1 回だけだが、地域ブロックごとに分けて募集するものは回が並ぶ（酒類業振興支援事業費補助金は 12 回）。
+  日時は日本時間。原典は UTC で、受付開始が 3026 年のような入力誤りがあるので、2100 年より後の日時は NULL にした。
+  いま受付中の回は acceptance_start_at <= 今 < acceptance_end_at で引く。
+  対象地域は target_area に原典の文字のまま（全国/北海道/… を / でつないだもの）入る。1 地域 1 行に分けたものが round_areas。
+
+  出典: デジタル庁「Jグランツ」の公開 API。Queria が補助金詳細（V2）の workflow を表にして作成した。
+published: true
+primary_key: [round_id]
+sources:
+  - path: https://developers.digital.go.jp/documents/jgrants/api/
+fields:
+  - name: round_id
+    title: 募集回 ID
+    description: J グランツの workflow の ID
+  - name: subsidy_id
+    title: 補助金 ID
+    description: subsidies の subsidy_id
+  - name: fiscal_year_round
+    title: 年度・回
+    description: 原典の文字のまま。多くは NULL
+  - name: target_area
+    title: 対象地域
+    description: 原典の文字のまま。/ 区切り
+  - name: target_area_detail
+    title: 対象地域の詳細
+    description: 原典の文字のまま。2026 年 10 月時点ではほぼ NULL
+  - name: acceptance_start_at
+    title: 受付開始日時
+    description: 日本時間
+  - name: acceptance_end_at
+    title: 受付終了日時
+    description: 日本時間
+  - name: project_end_at
+    title: 事業完了期限
+    description: 日本時間

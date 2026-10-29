@@ -1,0 +1,43 @@
+spec_version: "0.1"
+name: jgrants
+title: デジタル庁 Jグランツ 補助金
+description: |-
+  デジタル庁の補助金申請システム「Jグランツ」に載っている補助金。国の補助金と、Jグランツで申請を受ける都道府県・市区町村の補助金を、受付が終わったものも含めて収録する。
+  補助金ごとの名前・概要・利用目的・業種・補助率・補助上限額と、募集回ごとの受付期間・事業完了期限・対象地域（全国・都道府県・地方）を持つ。対象地域を都道府県コード付きで 1 地域 1 行に分けた表もある。
+  Jグランツを使わない自治体の補助金は入らない。市区町村は原典の対象地域に無く、タイトルの【】にしか出てこない。公募要領などの添付はファイル名だけを持つ。
+  毎日更新する。
+
+  出典: デジタル庁「Jグランツ」の公開 API（https://developers.digital.go.jp/documents/jgrants/api/）。Queria が取得して表に変換した。内容は国・自治体が保証するものではない。申請の前に各補助金の Jグランツのページで公式の情報を確かめること。
+keywords:
+  - 補助金
+  - 助成金
+  - Jグランツ
+  - jGrants
+  - 公募
+  - 受付期間
+  - 補助率
+  - 補助上限額
+  - 中小企業
+  - デジタル庁
+homepage: https://github.com/queria-io/dataset-jgrants
+language: ja
+themes: [government_finance, economy]
+
+sources:
+  - title: デジタル庁 Jグランツ API ドキュメント
+    path: https://developers.digital.go.jp/documents/jgrants/api/
+  - title: Jグランツ
+    path: https://www.jgrants-portal.go.jp/
+
+contributors:
+  - title: デジタル庁
+    path: https://www.digital.go.jp/
+    roles: [rightsHolder]
+
+spatial_coverage: [JP]
+update_frequency: daily
+cover: 💴
+
+schemas:
+  - name: subsidy
+    title: 補助金

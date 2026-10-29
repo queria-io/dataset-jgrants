@@ -1,0 +1,26 @@
+schema: subsidy
+name: details
+title: J グランツの補助金詳細（原典 JSON）
+description: |-
+  J グランツの公開 API が返す補助金詳細（V2）の JSON を、1 補助金 1 行でそのまま持つ。公募要領などの添付は base64 の本体を捨て、ファイル名の配列にしてある。
+  表にした subsidies・rounds にない項目を見るときと、毎日の取得で前回の詳細を使い回すために置いている。
+  list_json は一覧 API の行。fingerprint はその SHA-256 で、変わった補助金だけ詳細を取り直す。
+
+  出典: デジタル庁「Jグランツ」の公開 API。
+published: true
+primary_key: [id]
+sources:
+  - path: https://developers.digital.go.jp/documents/jgrants/api/
+fields:
+  - name: id
+    title: 補助金 ID
+  - name: fingerprint
+    title: 一覧の行の SHA-256
+  - name: fetched_at
+    title: 詳細の取得日時
+    description: ISO 8601（UTC）
+  - name: list_json
+    title: 一覧 API の行（JSON）
+  - name: detail_json
+    title: 詳細 API の結果（JSON）
+    description: 添付はファイル名だけ
