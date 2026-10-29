@@ -1,0 +1,31 @@
+schema: subsidy
+name: round_areas
+title: J グランツの補助金の対象地域
+description: |-
+  J グランツの補助金の募集回ごとの対象地域を、1 地域 1 行に分けたもの。
+  原典の地域は 全国・47 都道府県・8 つの地方（北海道地方、東北地方、関東・甲信越地方、東海・北陸地方、近畿地方、中国地方、四国地方、九州・沖縄地方）・海外 だけで、市区町村は入らない。市区町村の補助金も都道府県で入っている。
+  全国と 47 都道府県と地方を全部並べた回が多い。ある都道府県で使える補助金を引くときは、その prefecture_code の行で引けば足りることが多いが、全国だけを書いた回もあるので area_level = 'national' も足す。
+
+  出典：Jグランツ（デジタル庁）。Queria が公開 API の募集回の対象地域を分け、都道府県に都道府県コードを付けて作成した。
+published: true
+primary_key: [round_id, area_name]
+sources:
+  - path: https://developers.digital.go.jp/documents/jgrants/api/
+fields:
+  - name: round_id
+    title: 募集回 ID
+    description: rounds の round_id
+  - name: subsidy_id
+    title: 補助金 ID
+    description: subsidies の subsidy_id
+  - name: area_name
+    title: 地域
+    description: 全国・都道府県名・地方名・海外
+  - name: area_level
+    title: 地域の区分
+    description: national（全国）、prefecture（都道府県）、region（地方）、overseas（海外）
+    semantic: { role: dimension }
+  - name: prefecture_code
+    title: 都道府県コード
+    description: JIS X 0401 の 2 桁。都道府県の行だけ
+    semantic: { role: entity, name: prefecture }
