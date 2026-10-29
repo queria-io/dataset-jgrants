@@ -29,7 +29,6 @@ select
     target_area,
     target_area_detail,
     {% for name, alias in [('acceptance_start_datetime', 'acceptance_start'), ('acceptance_end_datetime', 'acceptance_end'), ('project_end_deadline', 'project_end')] %}
-    -- 日本時間に直す
-    case when year({{ name }}) <= 2100 then {{ name }} + interval 9 hour end as {{ alias }}_at{{ "," if not loop.last }}
+    case when year({{ name }}) <= 2100 then timezone('UTC', {{ name }}) end as {{ alias }}_at{{ "," if not loop.last }}
     {% endfor %}
 from parsed
