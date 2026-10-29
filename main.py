@@ -10,7 +10,8 @@ from dbt.cli.main import dbtRunner
 
 from pipelines.jgrants import download_jgrants
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
+# dbt を読み込むとルートロガーが先に設定されるので、force で上書きする
+logging.basicConfig(level=logging.INFO, format="%(message)s", force=True)
 logger = logging.getLogger("pipelines")
 
 

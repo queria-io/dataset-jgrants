@@ -18,16 +18,23 @@ select
     id as subsidy_id,
     j ->> 'name' as subsidy_number,
     j ->> 'title' as title,
-    -- タイトル先頭の【福岡県宗像市】。市区町村は API の地域に無く、ここにしか出ない
-    nullif(regexp_extract(j ->> 'title', '^【([^】]+)】', 1), '') as title_area,
+    -- タイトル先頭の【福岡県宗像市】。市区町村は API の地域に無く、ここにしか出ない。
+    -- 【】には府省名や年度も入るので、市区町村で終わるものだけ取る
+    nullif(regexp_extract(j ->> 'title', '^【([^】]*[市区町村])】', 1), '') as title_municipality,
     j ->> 'subsidy_catch_phrase' as catch_phrase,
     j ->> 'detail' as detail_html,
     trim(regexp_replace(
-        regexp_replace(j ->> 'detail', '<br\s*/?>|</p>|</li>', chr(10), 'g'),
-        '<[^>]+>', '', 'g'
-    )) as detail_text,
-    j ->> 'use_purpose' as use_purpose,
-    j ->> 'industry' as industry,
+        replace(replace(replace(replace(replace(
+            regexp_replace(
+                regexp_replace(j ->> 'detail', '<br\s*/?>|</p>|</li>', chr(10), 'g'),
+                '<[^>]+>', '', 'g'
+            ),
+            '&nbsp;', ' '), '&lt;', '<'), '&gt;', '>'), '&quot;', '"'), '&amp;', '&'),
+        '\n{3,}', chr(10) || chr(10), 'g'
+    ), ' ' || chr(10)) as detail_text,
+    -- 原典は「 / 」でつないだ文字列。全業種・全目的は全部の区分を並べてある
+    string_split(nullif(j ->> 'use_purpose', ''), ' / ') as use_purposes,
+    string_split(nullif(j ->> 'industry', ''), ' / ') as industries,
     j ->> 'target_number_of_employees' as target_number_of_employees,
     j ->> 'subsidy_rate' as subsidy_rate,
     try_cast(j ->> 'subsidy_max_limit' as bigint) as subsidy_max_limit,

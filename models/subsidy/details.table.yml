@@ -6,7 +6,7 @@ description: |-
   表にした subsidies・rounds にない項目を見るときと、毎日の取得で前回の詳細を使い回すために置いている。
   list_json は一覧 API の行。fingerprint はその SHA-256 で、変わった補助金だけ詳細を取り直す。
 
-  出典: デジタル庁「Jグランツ」の公開 API。
+  出典：Jグランツ（デジタル庁）。Queria が公開 API から取得し、添付の本体を除いた。
 published: true
 primary_key: [id]
 sources:

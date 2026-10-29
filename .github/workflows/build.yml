@@ -1,7 +1,7 @@
 name: Build
 
 # 公開せずにパイプラインと dbt build だけを回す。J グランツの API の形が変わったときに
-# Sync より先に気づくため。初回の全件は 1 時間かかるので、前回公開した詳細を使い回す
+# Sync より先に気づくため。初回の全件は 2 時間かかるので、前回公開した詳細を使い回す
 on:
   pull_request:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v5
         with:

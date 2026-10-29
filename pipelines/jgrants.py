@@ -39,7 +39,7 @@ DATASET = "queria/jgrants"
 # 8 語で 3,818 件、後ろの 4 語を足して 3,851 件（2026-10-29）。それでも漏れはありうる
 KEYWORDS = ["補助", "助成", "支援", "事業", "交付", "奨励", "給付", "補助金", "令和", "年度", "制度", "募集"]
 REFRESH_OPEN_AFTER = timedelta(days=7)
-# 詳細を続けて取るときの間隔。初回の全件は 1 時間ほどかかる
+# 詳細を続けて取るときの間隔。API の上限は 10 回/秒。初回の全件は 2 時間ほどかかる
 DETAIL_INTERVAL_SECONDS = 1.0
 ATTACHMENTS = ("application_guidelines", "outline_of_grant", "application_form")
 

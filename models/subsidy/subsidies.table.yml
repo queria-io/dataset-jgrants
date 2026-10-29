@@ -5,10 +5,12 @@ description: |-
   デジタル庁の補助金申請システム J グランツに載っている補助金。1 行が 1 補助金で、受付が終わったものも残る。
   国の補助金と、J グランツで申請を受ける都道府県・市区町村の補助金が入る。J グランツを使わない自治体の補助金は入らない。
   受付期間と対象地域は募集回ごとに違うことがあるので、この表ではなく rounds と round_areas にある。
-  市区町村の補助金でも、原典の対象地域は都道府県になっている。市区町村はタイトル先頭の【福岡県宗像市】のような書き方にしか出てこないので、それを title_area に抜き出した。
+  市区町村の補助金でも、原典の対象地域は都道府県になっている。市区町村はタイトル先頭の【福岡県宗像市】のような書き方にしか出てこないので、市区町村で終わるものだけを title_municipality に抜き出した（2026 年 10 月時点で 80 件）。【】には府省名・年度・公募回も入るが、それは取らない。
+  利用目的と業種は配列。全業種・全目的の補助金は全部の区分を並べてあるので、ある業種で使える補助金は list_contains(industries, '製造業') で引ける。
+  補助上限額の 0 は 1,128 件あり、上限なしか未記入とみられる。
   公募要領・交付要綱・申請様式は本体を持たず、ファイル名だけ持つ。本体は portal_url の J グランツのページから取る。
 
-  出典: デジタル庁「Jグランツ」の公開 API（https://developers.digital.go.jp/documents/jgrants/api/）。Queria が補助金詳細（V2）を表に変換して作成した。内容は国・自治体が保証するものではない。申請の前に portal_url の公式ページを確かめること。
+  出典：Jグランツ（デジタル庁、https://developers.digital.go.jp/documents/jgrants/api/）。Queria が公開 API の補助金詳細（V2）を取得して表に加工した。内容は国・自治体が保証するものではない。申請の前に portal_url の公式ページを確かめること。
 published: true
 primary_key: [subsidy_id]
 sources:
@@ -22,9 +24,9 @@ fields:
     description: J グランツの管理番号（S-00010016 の形）
   - name: title
     title: 補助金名
-  - name: title_area
-    title: タイトルにある地域
-    description: タイトル先頭の【】の中身（福岡県宗像市 など）。無ければ NULL
+  - name: title_municipality
+    title: タイトルにある市区町村
+    description: タイトル先頭の【】が市区町村で終わるときの中身（福岡県宗像市 など）。無ければ NULL
   - name: catch_phrase
     title: キャッチフレーズ
   - name: detail_html
@@ -32,14 +34,14 @@ fields:
     description: 原典の概要。問い合わせ先や外部のリンクを含むことが多い
   - name: detail_text
     title: 概要
-    description: detail_html からタグを除いたもの。段落の区切りは改行
-  - name: use_purpose
+    description: detail_html からタグを除き、&nbsp; などの文字参照を戻したもの。段落の区切りは改行
+  - name: use_purposes
     title: 利用目的
-    description: J グランツの検索の区分（設備整備・IT導入をしたい など）
+    description: J グランツの検索の区分（設備整備・IT導入をしたい など）の配列。15 種類
     semantic: { role: dimension }
-  - name: industry
+  - name: industries
     title: 業種
-    description: J グランツの検索の区分。日本標準産業分類の大分類の名前に近い
+    description: J グランツの検索の区分の配列。20 種類で、日本標準産業分類の大分類の名前に近い
     semantic: { role: dimension }
   - name: target_number_of_employees
     title: 対象の従業員数
@@ -50,7 +52,7 @@ fields:
     description: 原典の文字のまま（1/2、３／４ など）
   - name: subsidy_max_limit
     title: 補助上限額
-    description: 円
+    description: 円。0 は上限なしか未記入とみられる
     semantic: { role: measure, agg: max }
   - name: request_reception
     title: 申請受付の有無

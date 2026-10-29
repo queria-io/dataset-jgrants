@@ -7,7 +7,8 @@ description: |-
   Jグランツを使わない自治体の補助金は入らない。市区町村は原典の対象地域に無く、タイトルの【】にしか出てこない。公募要領などの添付はファイル名だけを持つ。
   毎日更新する。
 
-  出典: デジタル庁「Jグランツ」の公開 API（https://developers.digital.go.jp/documents/jgrants/api/）。Queria が取得して表に変換した。内容は国・自治体が保証するものではない。申請の前に各補助金の Jグランツのページで公式の情報を確かめること。
+  出典：Jグランツ（デジタル庁、https://developers.digital.go.jp/documents/jgrants/api/）。Queria が公開 API から取得して表に加工したもので、デジタル庁や各補助金の実施機関が作成したものではない。内容は国・自治体が保証するものではない。
+  Jグランツの Web-API 利用規約により、使うときは「出典：Jグランツ」と、加工したものであることを書くこと。申請の前に各補助金の Jグランツのページで公式の情報を確かめること。
 keywords:
   - 補助金
   - 助成金
@@ -22,6 +23,9 @@ keywords:
 homepage: https://github.com/queria-io/dataset-jgrants
 language: ja
 themes: [government_finance, economy]
+
+licenses:
+  - CC-BY-4.0
 
 sources:
   - title: デジタル庁 Jグランツ API ドキュメント

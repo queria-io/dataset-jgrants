@@ -18,6 +18,6 @@ jobs:
     uses: queria-io/dataset-shared/.github/workflows/sync.yml@main
     with:
       dataset_name: jgrants
-      # 初回の全件取得（詳細 3,800 件を 1 秒おき）が 1 時間を超える
-      timeout_minutes: 120
+      # 初回の全件取得（詳細 3,845 件を 1 秒おき）は Mac で 1 時間 52 分かかった
+      timeout_minutes: 180
     secrets: inherit
