@@ -19,14 +19,14 @@ select
     j ->> 'name' as subsidy_number,
     j ->> 'title' as title,
     -- タイトル先頭の【福岡県宗像市】。市区町村は API の地域に無く、ここにしか出ない。
-    -- 【】には府省名や年度も入るので、市区町村で終わるものだけ取る
-    nullif(regexp_extract(j ->> 'title', '^【([^】]*[市区町村])】', 1), '') as title_municipality,
+    -- 【】には府省名や年度も入るので、市区町村で終わるものだけ取る。「能登地区」のような地区は市区町村ではない
+    nullif(regexp_extract(j ->> 'title', '^【([^】]*(?:[市町村]|[^地]区))】', 1), '') as title_municipality,
     j ->> 'subsidy_catch_phrase' as catch_phrase,
     j ->> 'detail' as detail_html,
     trim(regexp_replace(
         replace(replace(replace(replace(replace(
             regexp_replace(
-                regexp_replace(j ->> 'detail', '<br\s*/?>|</p>|</li>', chr(10), 'g'),
+                regexp_replace(j ->> 'detail', '<br\s*/?>|</p>|</li>', chr(10), 'gi'),
                 '<[^>]+>', '', 'g'
             ),
             '&nbsp;', ' '), '&lt;', '<'), '&gt;', '>'), '&quot;', '"'), '&amp;', '&'),

@@ -6,6 +6,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# 初回の公開までは 1 回 2 時間かかり、J グランツへ詳細を 3,845 回取りに行く。同じ PR の古いランは止める
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest

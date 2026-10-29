@@ -44,9 +44,10 @@ DETAIL_INTERVAL_SECONDS = 1.0
 ATTACHMENTS = ("application_guidelines", "outline_of_grant", "application_form")
 
 
-def get_json(path: str, params: dict | None = None) -> dict:
+def get_json(path: str, params: dict | None = None, *, not_found_ok: bool = False) -> dict | None:
     url = f"{API}{path}" + (f"?{urlencode(params)}" if params else "")
-    return json.loads(fetch(url, user_agent=USER_AGENT, timeout=120))
+    body = fetch(url, user_agent=USER_AGENT, timeout=120, not_found_ok=not_found_ok)
+    return None if body is None else json.loads(body)
 
 
 def list_subsidies() -> dict[str, dict]:
@@ -86,27 +87,36 @@ def strip_attachments(detail: dict) -> dict:
     }
 
 
-def fetch_detail(subsidy_id: str) -> dict:
+def fetch_detail(subsidy_id: str) -> dict | None:
+    """詳細。一覧に出てから詳細を取るまでに消えたものは None。"""
     time.sleep(DETAIL_INTERVAL_SECONDS)
-    body = get_json(f"/v2/public/subsidies/id/{subsidy_id}")
-    return strip_attachments(body.get("result", [body])[0])
+    body = get_json(f"/v2/public/subsidies/id/{subsidy_id}", not_found_ok=True)
+    results = body.get("result", [body]) if body else []
+    return strip_attachments(results[0]) if results else None
 
 
 def previous_rows() -> dict[str, dict]:
-    """前回公開した subsidy.details。初回や読めないときは空。"""
+    """前回公開した subsidy.details。初回（データセットか表がまだ無い）は空。
+
+    それ以外の失敗（通信・レートリミット）は止める。空で続けると全件を取り直すうえ、
+    一覧から消えて前回の行にしか残っていない補助金が公開から落ちる。
+    """
     if os.environ.get("JGRANTS_REFETCH") == "1":
         return {}
-    try:
-        import queria
+    import duckdb
+    import queria
+    from queria.core import NoSuchDatasetError
 
-        con = queria.connect(user_agent=USER_AGENT)
+    # ビルドの読み出しは queria-build を名乗る（profiles.yml の custom_user_agent と同じ理由）
+    con = queria.connect(user_agent=os.environ.get("QUERIA_USER_AGENT") or USER_AGENT)
+    try:
         con.attach(DATASET, alias="previous")
         rows = con.sql(
             "select id, fingerprint, fetched_at, list_json, detail_json "
             "from previous.subsidy.details"
         ).fetchall()
-    except Exception as error:  # noqa: BLE001 初回は存在しないのが正常
-        logger.info("  前回の詳細を読めなかったので全件取る: %s", error)
+    except (NoSuchDatasetError, duckdb.CatalogException) as error:
+        logger.info("  前回の詳細が無いので全件取る: %s", error)
         return {}
     keys = ("id", "fingerprint", "fetched_at", "list_json", "detail_json")
     return {r[0]: dict(zip(keys, r)) for r in rows}
@@ -121,20 +131,27 @@ def download_jgrants(output: Path = OUTPUT) -> int:
     started = datetime.now(UTC)
     now = started.isoformat()
 
-    def current(subsidy_id: str, row: dict) -> dict:
+    def current(subsidy_id: str, row: dict) -> dict | None:
         digest = fingerprint(row)
         kept = previous.get(subsidy_id)
         if kept and kept["fingerprint"] == digest and not is_stale(kept, row, started):
+            return kept
+        detail = fetch_detail(subsidy_id)
+        if detail is None:
+            logger.warning("  詳細が無い（前回の行%s）: %s", "を残す" if kept else "も無い", subsidy_id)
             return kept
         return {
             "id": subsidy_id,
             "fingerprint": digest,
             "fetched_at": now,
             "list_json": json.dumps(row, ensure_ascii=False),
-            "detail_json": json.dumps(fetch_detail(subsidy_id), ensure_ascii=False),
+            "detail_json": json.dumps(detail, ensure_ascii=False),
         }
 
-    rows = {**previous, **{i: current(i, row) for i, row in listed.items()}}
+    rows = dict(previous)
+    for subsidy_id, row in listed.items():
+        if (value := current(subsidy_id, row)) is not None:
+            rows[subsidy_id] = value
     fetched = sum(r["fetched_at"] == now for r in rows.values())
     logger.info("  詳細を取り直した %d 件、前回のまま %d 件", fetched, len(rows) - fetched)
 
