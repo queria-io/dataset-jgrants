@@ -1,4 +1,6 @@
-spec_version: "0.1"
+# この dataset.yml は fdl commit が読む（FDL の dataset.json を YAML で書いたもの）。
+# 表と列の型・NULL・行数は fdl commit がカタログから埋める。
+# Queria だけの項目（テーマ・カバー・列の意味）は extensions.queria に書く。
 name: jgrants
 title: デジタル庁 Jグランツ 補助金
 description: |-
@@ -10,38 +12,240 @@ description: |-
   出典：Jグランツ（デジタル庁、https://developers.digital.go.jp/documents/jgrants/api/）。Queria が公開 API から取得して表に加工したもので、デジタル庁や各補助金の実施機関が作成したものではない。内容は国・自治体が保証するものではない。
   Jグランツの Web-API 利用規約により、使うときは「出典：Jグランツ」と、加工したものであることを書くこと。申請の前に各補助金の Jグランツのページで公式の情報を確かめること。
 keywords:
-  - 補助金
-  - 助成金
-  - Jグランツ
-  - jGrants
-  - 公募
-  - 受付期間
-  - 補助率
-  - 補助上限額
-  - 中小企業
-  - デジタル庁
+- 補助金
+- 助成金
+- Jグランツ
+- jGrants
+- 公募
+- 受付期間
+- 補助率
+- 補助上限額
+- 中小企業
+- デジタル庁
 homepage: https://github.com/queria-io/dataset-jgrants
 language: ja
-themes: [government_finance, economy]
-
 licenses:
-  - CC-BY-4.0
-
+- CC-BY-4.0
 sources:
-  - title: デジタル庁 Jグランツ API ドキュメント
-    path: https://developers.digital.go.jp/documents/jgrants/api/
-  - title: Jグランツ
-    path: https://www.jgrants-portal.go.jp/
-
+- title: デジタル庁 Jグランツ API ドキュメント
+  path: https://developers.digital.go.jp/documents/jgrants/api/
+- title: Jグランツ
+  path: https://www.jgrants-portal.go.jp/
 contributors:
-  - title: デジタル庁
-    path: https://www.digital.go.jp/
-    roles: [rightsHolder]
-
-spatial_coverage: [JP]
+- title: デジタル庁
+  path: https://www.digital.go.jp/
+  roles:
+  - rightsHolder
+spatial_coverage:
+- JP
 update_frequency: daily
-cover: 💴
-
 schemas:
-  - name: subsidy
-    title: 補助金
+- name: subsidy
+  title: 補助金
+extensions:
+  queria:
+    themes:
+    - government_finance
+    - economy
+    cover: 💴
+tables:
+- schema: subsidy
+  name: details
+  title: J グランツの補助金詳細（原典 JSON）
+  description: |-
+    J グランツの公開 API が返す補助金詳細（V2）の JSON を、1 補助金 1 行でそのまま持つ。公募要領などの添付は base64 の本体を捨て、ファイル名の配列にしてある。
+    表にした subsidies・rounds にない項目を見るときと、毎日の取得で前回の詳細を使い回すために置いている。
+    list_json は一覧 API の行。fingerprint はその SHA-256 で、変わった補助金だけ詳細を取り直す。
+
+    出典：Jグランツ（デジタル庁）。Queria が公開 API から取得し、添付の本体を除いた。
+  primary_key:
+  - id
+  sources:
+  - path: https://developers.digital.go.jp/documents/jgrants/api/
+  fields:
+  - name: id
+    title: 補助金 ID
+  - name: fingerprint
+    title: 一覧の行の SHA-256
+  - name: fetched_at
+    title: 詳細の取得日時
+    description: ISO 8601（UTC）
+  - name: list_json
+    title: 一覧 API の行（JSON）
+  - name: detail_json
+    title: 詳細 API の結果（JSON）
+    description: 添付はファイル名だけ
+- schema: subsidy
+  name: round_areas
+  title: J グランツの補助金の対象地域
+  description: |-
+    J グランツの補助金の募集回ごとの対象地域を、1 地域 1 行に分けたもの。
+    原典の地域は 全国・47 都道府県・8 つの地方（北海道地方、東北地方、関東・甲信越地方、東海・北陸地方、近畿地方、中国地方、四国地方、九州・沖縄地方）・海外 だけで、市区町村は入らない。市区町村の補助金も都道府県で入っている。
+    全国と 47 都道府県と地方を全部並べた回が多い。ある都道府県で使える補助金を引くときは、その prefecture_code の行で引けば足りることが多いが、全国だけを書いた回もあるので area_level = 'national' も足す。
+
+    出典：Jグランツ（デジタル庁）。Queria が公開 API の募集回の対象地域を分け、都道府県に都道府県コードを付けて作成した。
+  primary_key:
+  - round_id
+  - area_name
+  sources:
+  - path: https://developers.digital.go.jp/documents/jgrants/api/
+  fields:
+  - name: round_id
+    title: 募集回 ID
+    description: rounds の round_id
+  - name: subsidy_id
+    title: 補助金 ID
+    description: subsidies の subsidy_id
+  - name: area_name
+    title: 地域
+    description: 全国・都道府県名・地方名・海外
+  - name: area_level
+    title: 地域の区分
+    description: national（全国）、prefecture（都道府県）、region（地方）、overseas（海外）
+    extensions:
+      queria:
+        semantic:
+          role: dimension
+  - name: prefecture_code
+    title: 都道府県コード
+    description: JIS X 0401 の 2 桁。都道府県の行だけ
+    extensions:
+      queria:
+        semantic:
+          role: entity
+          name: prefecture
+- schema: subsidy
+  name: rounds
+  title: J グランツの補助金の募集回
+  description: |-
+    J グランツの補助金の募集回。1 行が 1 補助金の 1 回で、補助金ごとの受付期間・事業完了期限・対象地域を持つ。
+    多くの補助金は 1 回だけだが、地域ブロックごとに分けて募集するものは回が並ぶ（酒類業振興支援事業費補助金は 12 回）。
+    日時はタイムゾーン付き（原典は UTC）。受付開始が 3026 年のような入力誤りがあるので、2100 年より後の日時は NULL にした。
+    いま受付中の回は acceptance_start_at <= now() AND now() < acceptance_end_at で引く。
+    対象地域は target_area に原典の文字のまま（全国/北海道/… を / でつないだもの）入る。1 地域 1 行に分けたものが round_areas。
+
+    出典：Jグランツ（デジタル庁）。Queria が公開 API の補助金詳細（V2）の workflow を表にして作成した。
+  primary_key:
+  - round_id
+  sources:
+  - path: https://developers.digital.go.jp/documents/jgrants/api/
+  fields:
+  - name: round_id
+    title: 募集回 ID
+    description: J グランツの workflow の ID
+  - name: subsidy_id
+    title: 補助金 ID
+    description: subsidies の subsidy_id
+  - name: fiscal_year_round
+    title: 年度・回
+    description: 原典の文字のまま。多くは NULL
+  - name: target_area
+    title: 対象地域
+    description: 原典の文字のまま。/ 区切り
+  - name: target_area_detail
+    title: 対象地域の詳細
+    description: 原典の文字のまま。2026 年 10 月時点ではほぼ NULL
+  - name: acceptance_start_at
+    title: 受付開始日時
+    description: タイムゾーン付き
+  - name: acceptance_end_at
+    title: 受付終了日時
+    description: タイムゾーン付き
+  - name: project_end_at
+    title: 事業完了期限
+    description: タイムゾーン付き
+- schema: subsidy
+  name: subsidies
+  title: J グランツの補助金
+  description: |-
+    デジタル庁の補助金申請システム J グランツに載っている補助金。1 行が 1 補助金で、受付が終わったものも残る。
+    国の補助金と、J グランツで申請を受ける都道府県・市区町村の補助金が入る。J グランツを使わない自治体の補助金は入らない。
+    受付期間と対象地域は募集回ごとに違うことがあるので、この表ではなく rounds と round_areas にある。
+    市区町村の補助金でも、原典の対象地域は都道府県になっている。市区町村はタイトル先頭の【福岡県宗像市】のような書き方にしか出てこないので、市区町村で終わるものだけを title_municipality に抜き出した（2026 年 10 月時点で 80 件）。【】には府省名・年度・公募回も入るが、それは取らない。
+    利用目的と業種は配列。全業種・全目的の補助金は全部の区分を並べてあるので、ある業種で使える補助金は list_contains(industries, '製造業') で引ける。
+    補助上限額の 0 は 1,128 件あり、上限なしか未記入とみられる。
+    公募要領・交付要綱・申請様式は本体を持たず、ファイル名だけ持つ。本体は portal_url の J グランツのページから取る。
+
+    出典：Jグランツ（デジタル庁、https://developers.digital.go.jp/documents/jgrants/api/）。Queria が公開 API の補助金詳細（V2）を取得して表に加工した。内容は国・自治体が保証するものではない。申請の前に portal_url の公式ページを確かめること。
+  primary_key:
+  - subsidy_id
+  sources:
+  - path: https://developers.digital.go.jp/documents/jgrants/api/
+  fields:
+  - name: subsidy_id
+    title: 補助金 ID
+    description: J グランツの補助金 ID（18 文字）。portal_url の末尾と同じ
+  - name: subsidy_number
+    title: 補助金番号
+    description: J グランツの管理番号（S-00010016 の形）
+  - name: title
+    title: 補助金名
+  - name: title_municipality
+    title: タイトルにある市区町村
+    description: タイトル先頭の【】が市区町村で終わるときの中身（福岡県宗像市 など）。無ければ NULL
+  - name: catch_phrase
+    title: キャッチフレーズ
+  - name: detail_html
+    title: 概要（HTML）
+    description: 原典の概要。問い合わせ先や外部のリンクを含むことが多い
+  - name: detail_text
+    title: 概要
+    description: detail_html からタグを除き、&nbsp; などの文字参照を戻したもの。段落の区切りは改行
+  - name: use_purposes
+    title: 利用目的
+    description: J グランツの検索の区分（設備整備・IT導入をしたい など）の配列。15 種類
+    extensions:
+      queria:
+        semantic:
+          role: dimension
+  - name: industries
+    title: 業種
+    description: J グランツの検索の区分の配列。20 種類で、日本標準産業分類の大分類の名前に近い
+    extensions:
+      queria:
+        semantic:
+          role: dimension
+  - name: target_number_of_employees
+    title: 対象の従業員数
+    description: 従業員数の制約なし・300名以下 など
+    extensions:
+      queria:
+        semantic:
+          role: dimension
+  - name: subsidy_rate
+    title: 補助率
+    description: 原典の文字のまま（1/2、３／４ など）
+  - name: subsidy_max_limit
+    title: 補助上限額
+    description: 円。0 は上限なしか未記入とみられる
+    extensions:
+      queria:
+        semantic:
+          role: measure
+          agg: max
+  - name: request_reception
+    title: 申請受付の有無
+    description: 原典の request_reception_presence が 有 なら true、無 なら false
+  - name: multiple_requests_allowed
+    title: 複数申請の可否
+  - name: grant_type
+    title: 類型
+    description: 一般・一般型 など。多くは NULL
+    extensions:
+      queria:
+        semantic:
+          role: dimension
+  - name: program_name
+    title: 事業名
+    description: 原典の institution_name。名前に反して実施機関ではなく事業の名前が入っている
+  - name: portal_url
+    title: J グランツのページ
+  - name: guideline_files
+    title: 公募要領のファイル名
+  - name: outline_files
+    title: 交付要綱のファイル名
+  - name: form_files
+    title: 申請様式のファイル名
+  - name: fetched_at
+    title: 取得日時
+    description: この行の詳細を J グランツから取った日時
