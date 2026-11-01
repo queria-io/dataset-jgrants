@@ -1,4 +1,6 @@
-spec_version: "0.1"
+# この dataset.yml は fdl commit が読む（FDL の dataset.json を YAML で書いたもの）。
+# 表の説明は models/ の *.table.yml に書く。表と列の型・NULL・行数は fdl commit がカタログから埋める。
+# Queria だけの項目（テーマ・カバー・列の意味）は extensions.queria に書く。
 name: jgrants
 title: デジタル庁 Jグランツ 補助金
 description: |-
@@ -10,38 +12,39 @@ description: |-
   出典：Jグランツ（デジタル庁、https://developers.digital.go.jp/documents/jgrants/api/）。Queria が公開 API から取得して表に加工したもので、デジタル庁や各補助金の実施機関が作成したものではない。内容は国・自治体が保証するものではない。
   Jグランツの Web-API 利用規約により、使うときは「出典：Jグランツ」と、加工したものであることを書くこと。申請の前に各補助金の Jグランツのページで公式の情報を確かめること。
 keywords:
-  - 補助金
-  - 助成金
-  - Jグランツ
-  - jGrants
-  - 公募
-  - 受付期間
-  - 補助率
-  - 補助上限額
-  - 中小企業
-  - デジタル庁
+- 補助金
+- 助成金
+- Jグランツ
+- jGrants
+- 公募
+- 受付期間
+- 補助率
+- 補助上限額
+- 中小企業
+- デジタル庁
 homepage: https://github.com/queria-io/dataset-jgrants
 language: ja
-themes: [government_finance, economy]
-
 licenses:
-  - CC-BY-4.0
-
+- CC-BY-4.0
 sources:
-  - title: デジタル庁 Jグランツ API ドキュメント
-    path: https://developers.digital.go.jp/documents/jgrants/api/
-  - title: Jグランツ
-    path: https://www.jgrants-portal.go.jp/
-
+- title: デジタル庁 Jグランツ API ドキュメント
+  path: https://developers.digital.go.jp/documents/jgrants/api/
+- title: Jグランツ
+  path: https://www.jgrants-portal.go.jp/
 contributors:
-  - title: デジタル庁
-    path: https://www.digital.go.jp/
-    roles: [rightsHolder]
-
-spatial_coverage: [JP]
+- title: デジタル庁
+  path: https://www.digital.go.jp/
+  roles:
+  - rightsHolder
+spatial_coverage:
+- JP
 update_frequency: daily
-cover: 💴
-
 schemas:
-  - name: subsidy
-    title: 補助金
+- name: subsidy
+  title: 補助金
+extensions:
+  queria:
+    themes:
+    - government_finance
+    - economy
+    cover: 💴

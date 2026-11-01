@@ -11,7 +11,6 @@ description: |-
   公募要領・交付要綱・申請様式は本体を持たず、ファイル名だけ持つ。本体は portal_url の J グランツのページから取る。
 
   出典：Jグランツ（デジタル庁、https://developers.digital.go.jp/documents/jgrants/api/）。Queria が公開 API の補助金詳細（V2）を取得して表に加工した。内容は国・自治体が保証するものではない。申請の前に portal_url の公式ページを確かめること。
-published: true
 primary_key: [subsidy_id]
 sources:
   - path: https://developers.digital.go.jp/documents/jgrants/api/
@@ -38,22 +37,22 @@ fields:
   - name: use_purposes
     title: 利用目的
     description: J グランツの検索の区分（設備整備・IT導入をしたい など）の配列。15 種類
-    semantic: { role: dimension }
+    extensions: { queria: { semantic: { role: dimension } } }
   - name: industries
     title: 業種
     description: J グランツの検索の区分の配列。20 種類で、日本標準産業分類の大分類の名前に近い
-    semantic: { role: dimension }
+    extensions: { queria: { semantic: { role: dimension } } }
   - name: target_number_of_employees
     title: 対象の従業員数
     description: 従業員数の制約なし・300名以下 など
-    semantic: { role: dimension }
+    extensions: { queria: { semantic: { role: dimension } } }
   - name: subsidy_rate
     title: 補助率
     description: 原典の文字のまま（1/2、３／４ など）
   - name: subsidy_max_limit
     title: 補助上限額
     description: 円。0 は上限なしか未記入とみられる
-    semantic: { role: measure, agg: max }
+    extensions: { queria: { semantic: { role: measure, agg: max } } }
   - name: request_reception
     title: 申請受付の有無
     description: 原典の request_reception_presence が 有 なら true、無 なら false
@@ -62,7 +61,7 @@ fields:
   - name: grant_type
     title: 類型
     description: 一般・一般型 など。多くは NULL
-    semantic: { role: dimension }
+    extensions: { queria: { semantic: { role: dimension } } }
   - name: program_name
     title: 事業名
     description: 原典の institution_name。名前に反して実施機関ではなく事業の名前が入っている

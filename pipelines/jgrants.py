@@ -35,7 +35,6 @@ logger = logging.getLogger("pipelines")
 API = "https://api.jgrants-portal.go.jp/exp"
 USER_AGENT = "dataset-jgrants (+https://github.com/queria-io/dataset-jgrants)"
 OUTPUT = Path("data/jgrants/details.ndjson")
-DATASET = "queria/jgrants"
 # 8 語で 3,818 件、後ろの 4 語を足して 3,851 件（2026-10-29）。それでも漏れはありうる
 KEYWORDS = ["補助", "助成", "支援", "事業", "交付", "奨励", "給付", "補助金", "令和", "年度", "制度", "募集"]
 REFRESH_OPEN_AFTER = timedelta(days=7)
@@ -96,28 +95,29 @@ def fetch_detail(subsidy_id: str) -> dict | None:
 
 
 def previous_rows() -> dict[str, dict]:
-    """前回公開した subsidy.details。初回（データセットか表がまだ無い）は空。
+    """前回公開した subsidy.details。fdl checkout した作業場のカタログから読む。
 
-    それ以外の失敗（通信・レートリミット）は止める。空で続けると全件を取り直すうえ、
-    一覧から消えて前回の行にしか残っていない補助金が公開から落ちる。
+    初回（表がまだ無い）は空。それ以外の失敗（通信）は止める。空で続けると全件を
+    取り直すうえ、一覧から消えて前回の行にしか残っていない補助金が公開から落ちる。
     """
     if os.environ.get("JGRANTS_REFETCH") == "1":
         return {}
     import duckdb
-    import queria
-    from queria.core import NoSuchDatasetError
 
-    # ビルドの読み出しは queria-build を名乗る（profiles.yml の custom_user_agent と同じ理由）
-    con = queria.connect(user_agent=os.environ.get("QUERIA_USER_AGENT") or USER_AGENT)
+    con = duckdb.connect()
+    con.execute("INSTALL ducklake; LOAD ducklake; INSTALL httpfs; LOAD httpfs;")
+    working = os.environ["FDL_WORKING"].replace("'", "''")
+    con.execute(f"ATTACH 'ducklake:{working}' AS previous (READ_ONLY, META_TYPE 'sqlite')")
     try:
-        con.attach(DATASET, alias="previous")
         rows = con.sql(
             "select id, fingerprint, fetched_at, list_json, detail_json "
             "from previous.subsidy.details"
         ).fetchall()
-    except (NoSuchDatasetError, duckdb.CatalogException) as error:
+    except duckdb.CatalogException as error:
         logger.info("  前回の詳細が無いので全件取る: %s", error)
         return {}
+    finally:
+        con.close()
     keys = ("id", "fingerprint", "fetched_at", "list_json", "detail_json")
     return {r[0]: dict(zip(keys, r)) for r in rows}
 
