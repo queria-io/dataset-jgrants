@@ -21,5 +21,9 @@ jobs:
           submodules: true
       - uses: astral-sh/setup-uv@v7
       - run: uv sync
+      # 前回の詳細は公開中の main から読む（Sync と同じく fdl checkout で）。書き戻しはしない
+      - run: uv run fdl checkout https://data.queria.io/datasets/queria/jgrants/ .fdl/work.sqlite
       - run: uv run python -c "import main; main.download_jgrants()"
+        env:
+          FDL_WORKING: ${{ github.workspace }}/.fdl/work.sqlite
       - run: uv run dbt build --profiles-dir ci
