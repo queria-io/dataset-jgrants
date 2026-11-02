@@ -1,6 +1,6 @@
 # この dataset.yml は fdl commit が読む（FDL の dataset.json を YAML で書いたもの）。
 # 表の説明は models/ の *.table.yml に書く。表と列の型・NULL・行数は fdl commit がカタログから埋める。
-# Queria だけの項目（テーマ・カバー・列の意味）は extensions.queria に書く。
+# Queria だけの項目（テーマ・カバー・列の意味）は annotations.queria に書く。
 name: jgrants
 title: デジタル庁 Jグランツ 補助金
 description: |-
@@ -42,7 +42,7 @@ update_frequency: daily
 schemas:
 - name: subsidy
   title: 補助金
-extensions:
+annotations:
   queria:
     themes:
     - government_finance

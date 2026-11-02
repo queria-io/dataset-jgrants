@@ -23,8 +23,8 @@ fields:
   - name: area_level
     title: 地域の区分
     description: national（全国）、prefecture（都道府県）、region（地方）、overseas（海外）
-    extensions: { queria: { semantic: { role: dimension } } }
+    annotations: { queria: { semantic: { role: dimension } } }
   - name: prefecture_code
     title: 都道府県コード
     description: JIS X 0401 の 2 桁。都道府県の行だけ
-    extensions: { queria: { semantic: { role: entity, name: prefecture } } }
+    annotations: { queria: { semantic: { role: entity, name: prefecture } } }
