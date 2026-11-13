@@ -65,7 +65,7 @@ WHERE list_contains(industries, '製造業');
 ```bash
 git submodule update --init
 uv sync
-scripts/build.sh                    # queria sync -- python main.py
+scripts/build.sh                    # fdl checkout → python main.py → fdl commit
 JGRANTS_REFETCH=1 scripts/build.sh  # 詳細を全件取得し直す（2 時間ほど）
 ```
 
