@@ -19,3 +19,8 @@ models:
     +database: jgrants
     subsidy:
       +materialized: table
+      # raw は取得したまま、stg は JSON の項目の取り出しと型付け。どちらも mart の SQL に展開し、テーブルは作らない
+      raw:
+        +materialized: ephemeral
+      stg:
+        +materialized: ephemeral

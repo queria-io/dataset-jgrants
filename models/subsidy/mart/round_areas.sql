@@ -20,7 +20,7 @@ areas as (
         round_id,
         subsidy_id,
         trim(unnest(string_split(target_area, '/'))) as area_name
-    from {{ ref('rounds') }}
+    from {{ ref('stg_rounds') }}
     where target_area is not null
 )
 
