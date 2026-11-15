@@ -95,7 +95,7 @@ def fetch_detail(subsidy_id: str) -> dict | None:
 
 
 def previous_rows() -> dict[str, dict]:
-    """前回公開した subsidy.details。fdl checkout した作業場のカタログから読む。
+    """前回公開した subsidy.details。fdl clone した作業場のカタログから読む。
 
     初回（表がまだ無い）は空。それ以外の失敗（通信）は止める。空で続けると全件を
     取り直すうえ、一覧から消えて前回の行にしか残っていない補助金が公開から落ちる。
