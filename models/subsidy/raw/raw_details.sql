@@ -1,5 +1,5 @@
-{# J グランツの補助金詳細（V2）をそのまま 1 補助金 1 行で持つ。添付は base64 を捨ててファイル名だけ。
-   pipelines/jgrants.py が data/jgrants/details.ndjson に書き出し、次の取得はこの表を読んで差分だけ取る。 #}
+{# J グランツの補助金詳細（V2）。pipelines/jgrants.py が data/jgrants/details.ndjson に書いた 1 補助金 1 行をそのまま読む。
+   添付は base64 を捨ててファイル名だけ。 #}
 
 select
     id,

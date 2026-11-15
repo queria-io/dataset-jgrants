@@ -1,8 +1,8 @@
-{# 補助金 1 件 1 行。募集回ごとの受付期間と地域は rounds と round_areas。 #}
+{# 補助金 1 件 1 行。補助金詳細の JSON から項目を取り出し、型を付ける。募集回ごとの受付期間と地域は stg_rounds。 #}
 
 with details as (
     select id, cast(detail_json as json) as j, fetched_at
-    from {{ ref('details') }}
+    from {{ ref('raw_details') }}
 ),
 
 files as (

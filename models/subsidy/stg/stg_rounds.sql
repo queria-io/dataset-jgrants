@@ -1,4 +1,4 @@
-{# 補助金の募集回（J グランツの workflow）1 回 1 行。受付期間と対象地域は回ごとに違うことがある。
+{# 補助金の募集回（J グランツの workflow）1 回 1 行。補助金詳細の workflow を 1 回 1 行に分け、日時に型を付ける。
    日時は原典が UTC。秒の無い 2026-10-28T06:35Z の形と、秒とミリ秒のある形が混ざる。
    受付開始が 3026 年のような入力誤りがあるので、2100 年より後は NULL にする。 #}
 
@@ -6,7 +6,7 @@ with workflows as (
     select
         id as subsidy_id,
         unnest(from_json(cast(detail_json as json) -> 'workflow', '["JSON"]')) as w
-    from {{ ref('details') }}
+    from {{ ref('raw_details') }}
 ),
 
 parsed as (
