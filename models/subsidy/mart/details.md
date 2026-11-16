@@ -1,5 +1,6 @@
-schema: subsidy
-name: details
+---
+$schema: https://queria.io/schemas/table/v1.json
+table: subsidy.details
 title: Jグランツの補助金詳細（原典 JSON）
 description: |-
   Jグランツの公開 API が返す補助金詳細（V2）の JSON を、1 補助金 1 行で持ちます。subsidies・rounds にない項目を見るときに使います。
@@ -21,3 +22,4 @@ fields:
   - name: detail_json
     title: 詳細 API の結果（JSON）
     description: 添付はファイル名だけです
+---
