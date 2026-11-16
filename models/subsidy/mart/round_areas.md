@@ -1,5 +1,6 @@
-schema: subsidy
-name: round_areas
+---
+$schema: https://queria.io/schemas/table/v1.json
+table: subsidy.round_areas
 title: Jグランツの補助金の対象地域
 description: |-
   募集回の対象地域を 1 地域 1 行に分けたものです。都道府県の行には都道府県コードを付けています。
@@ -22,8 +23,9 @@ fields:
   - name: area_level
     title: 地域の区分
     description: national（全国）、prefecture（都道府県）、region（地方）、overseas（海外）
-    annotations: { queria: { semantic: { role: dimension } } }
+    semantic: {role: dimension}
   - name: prefecture_code
     title: 都道府県コード
     description: JIS X 0401 の 2 桁。都道府県の行だけに入ります
-    annotations: { queria: { semantic: { role: entity, name: prefecture } } }
+    semantic: {role: entity, name: prefecture}
+---

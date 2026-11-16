@@ -1,5 +1,6 @@
-schema: subsidy
-name: rounds
+---
+$schema: https://queria.io/schemas/table/v1.json
+table: subsidy.rounds
 title: Jグランツの補助金の募集回
 description: |-
   補助金の募集回です。1 行が 1 補助金の 1 回で、受付期間・事業完了期限・対象地域を持ちます。
@@ -34,3 +35,4 @@ fields:
   - name: project_end_at
     title: 事業完了期限
     description: タイムゾーン付き
+---

@@ -1,5 +1,6 @@
-schema: subsidy
-name: subsidies
+---
+$schema: https://queria.io/schemas/table/v1.json
+table: subsidy.subsidies
 title: Jグランツの補助金
 description: |-
   Jグランツに載っている補助金です。1 行が 1 補助金で、受付が終わったものも含みます。
@@ -33,22 +34,22 @@ fields:
   - name: use_purposes
     title: 利用目的
     description: Jグランツの検索区分（設備整備・IT導入をしたい など）の配列。15 種類
-    annotations: { queria: { semantic: { role: dimension } } }
+    semantic: {role: dimension}
   - name: industries
     title: 業種
     description: Jグランツの検索区分の配列。20 種類
-    annotations: { queria: { semantic: { role: dimension } } }
+    semantic: {role: dimension}
   - name: target_number_of_employees
     title: 対象の従業員数
     description: 従業員数の制約なし・300名以下 など
-    annotations: { queria: { semantic: { role: dimension } } }
+    semantic: {role: dimension}
   - name: subsidy_rate
     title: 補助率
     description: 原典の文字のまま（1/2、３／４ など）
   - name: subsidy_max_limit
     title: 補助上限額
     description: 円。0 は上限なしか未記入です
-    annotations: { queria: { semantic: { role: measure, agg: max } } }
+    semantic: {role: measure, agg: max}
   - name: request_reception
     title: 申請受付の有無
     description: 原典の request_reception_presence が「有」なら true
@@ -57,7 +58,7 @@ fields:
   - name: grant_type
     title: 類型
     description: 一般・一般型 など
-    annotations: { queria: { semantic: { role: dimension } } }
+    semantic: {role: dimension}
   - name: program_name
     title: 事業名
     description: 原典の institution_name。実施機関名ではなく事業名が入っています
@@ -72,3 +73,4 @@ fields:
   - name: fetched_at
     title: 取得日時
     description: この行の詳細を Jグランツから取得した日時
+---
