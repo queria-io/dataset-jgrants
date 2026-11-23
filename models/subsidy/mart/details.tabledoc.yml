@@ -1,15 +1,12 @@
----
-$schema: https://queria.io/schemas/table/v1.json
-table: subsidy.details
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
 title: Jグランツの補助金詳細（原典 JSON）
 description: |-
   Jグランツの公開 API が返す補助金詳細（V2）の JSON を、1 補助金 1 行で持ちます。subsidies・rounds にない項目を見るときに使います。
 
   - 添付は base64 の本体を除き、ファイル名だけを持ちます
 primary_key: [id]
-sources:
-  - path: https://developers.digital.go.jp/documents/jgrants/api/
-fields:
+sources: [api]
+columns:
   - name: id
     title: 補助金 ID
   - name: fingerprint
@@ -22,4 +19,3 @@ fields:
   - name: detail_json
     title: 詳細 API の結果（JSON）
     description: 添付はファイル名だけです
----

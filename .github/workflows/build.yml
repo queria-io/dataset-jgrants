@@ -23,7 +23,7 @@ jobs:
       - run: uv sync
       # 前回の詳細は公開中の main から読む（Sync と同じく fdl clone で）。書き戻しはしない
       # fdl clone はバージョンの説明 (dataset.json と README.md など) を実行したフォルダに書き、
-      # 同じ名前のファイルがあると止まる。説明はこのリポジトリの queria.yml なので、空のフォルダで実行する
+      # 同じ名前のファイルがあると止まる。説明はこのリポジトリの tabledoc.yml なので、空のフォルダで実行する
       - run: here="$PWD"; cd "$(mktemp -d)" && uv run --project "$here" fdl clone https://data.queria.io/datasets/queria/jgrants/ "$here/.fdl/work.sqlite"
       - run: uv run python -c "import main; main.download_jgrants()"
         env:

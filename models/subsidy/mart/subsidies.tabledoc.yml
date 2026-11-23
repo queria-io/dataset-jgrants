@@ -1,6 +1,4 @@
----
-$schema: https://queria.io/schemas/table/v1.json
-table: subsidy.subsidies
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
 title: Jグランツの補助金
 description: |-
   Jグランツに載っている補助金です。1 行が 1 補助金で、受付が終わったものも含みます。
@@ -9,9 +7,8 @@ description: |-
   - 補助上限額の 0 は、上限なしか未記入です（原典で区別できません）
   - 公募要領・交付要綱・申請様式はファイル名だけを持ちます
 primary_key: [subsidy_id]
-sources:
-  - path: https://developers.digital.go.jp/documents/jgrants/api/
-fields:
+sources: [api]
+columns:
   - name: subsidy_id
     title: 補助金 ID
     description: Jグランツの補助金 ID（18 文字）。portal_url の末尾と同じです
@@ -34,22 +31,21 @@ fields:
   - name: use_purposes
     title: 利用目的
     description: Jグランツの検索区分（設備整備・IT導入をしたい など）の配列。15 種類
-    semantic: {role: dimension}
+    dimension: categorical
   - name: industries
     title: 業種
     description: Jグランツの検索区分の配列。20 種類
-    semantic: {role: dimension}
+    dimension: categorical
   - name: target_number_of_employees
     title: 対象の従業員数
     description: 従業員数の制約なし・300名以下 など
-    semantic: {role: dimension}
+    dimension: categorical
   - name: subsidy_rate
     title: 補助率
     description: 原典の文字のまま（1/2、３／４ など）
   - name: subsidy_max_limit
     title: 補助上限額
     description: 円。0 は上限なしか未記入です
-    semantic: {role: measure, agg: max}
   - name: request_reception
     title: 申請受付の有無
     description: 原典の request_reception_presence が「有」なら true
@@ -58,7 +54,7 @@ fields:
   - name: grant_type
     title: 類型
     description: 一般・一般型 など
-    semantic: {role: dimension}
+    dimension: categorical
   - name: program_name
     title: 事業名
     description: 原典の institution_name。実施機関名ではなく事業名が入っています
@@ -73,4 +69,5 @@ fields:
   - name: fetched_at
     title: 取得日時
     description: この行の詳細を Jグランツから取得した日時
----
+metrics:
+  - {name: subsidy_max_limit, agg: max, expr: subsidy_max_limit}
