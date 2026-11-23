@@ -24,14 +24,14 @@ licenses:
 sources:
   - id: api
     title: デジタル庁 Jグランツ API ドキュメント
-    path: https://developers.digital.go.jp/documents/jgrants/api/
+    url: https://developers.digital.go.jp/documents/jgrants/api/
   - id: jgrants-portal
     title: Jグランツ
-    path: https://www.jgrants-portal.go.jp/
+    url: https://www.jgrants-portal.go.jp/
 contributors:
   - id: digital
     title: デジタル庁
-    path: https://www.digital.go.jp/
+    url: https://www.digital.go.jp/
     roles:
       - rightsHolder
 spatial_coverage:
