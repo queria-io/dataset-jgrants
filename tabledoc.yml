@@ -1,11 +1,11 @@
-$schema: https://queria.io/schemas/dataset/v1.json
+$schema: https://tabledoc.queria.io/schemas/dataset/v1.json
 name: jgrants
 title: デジタル庁 Jグランツ 補助金
 description: |-
   デジタル庁の補助金申請システム「Jグランツ」に載っている補助金の一覧です。補助金ごとの補助率・補助上限額と、募集回ごとの受付期間・対象地域を収録し、毎日更新します。
 
   出典：Jグランツ（デジタル庁）。Queria が公開 API から取得して加工したものです。
-keywords:
+topics:
   - 補助金
   - 助成金
   - Jグランツ
@@ -21,12 +21,15 @@ language: ja
 licenses:
   - CC-BY-4.0
 sources:
-  - title: デジタル庁 Jグランツ API ドキュメント
+  - id: api
+    title: デジタル庁 Jグランツ API ドキュメント
     path: https://developers.digital.go.jp/documents/jgrants/api/
-  - title: Jグランツ
+  - id: jgrants-portal
+    title: Jグランツ
     path: https://www.jgrants-portal.go.jp/
 contributors:
-  - title: デジタル庁
+  - id: digital
+    title: デジタル庁
     path: https://www.digital.go.jp/
     roles:
       - rightsHolder
@@ -36,7 +39,3 @@ update_frequency: daily
 schemas:
   - name: subsidy
     title: 補助金
-themes:
-  - government_finance
-  - economy
-cover: 💴

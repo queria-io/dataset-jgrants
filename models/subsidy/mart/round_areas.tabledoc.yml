@@ -1,6 +1,4 @@
----
-$schema: https://queria.io/schemas/table/v1.json
-table: subsidy.round_areas
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
 title: Jグランツの補助金の対象地域
 description: |-
   募集回の対象地域を 1 地域 1 行に分けたものです。都道府県の行には都道府県コードを付けています。
@@ -8,9 +6,8 @@ description: |-
   - 地域は全国・47 都道府県・8 地方・海外だけで、市区町村は含みません
   - 全国だけを書いた募集回があるため、都道府県で絞るときは area_level = 'national' の行も含めてください
 primary_key: [round_id, area_name]
-sources:
-  - path: https://developers.digital.go.jp/documents/jgrants/api/
-fields:
+sources: [api]
+columns:
   - name: round_id
     title: 募集回 ID
     description: rounds の round_id
@@ -23,9 +20,8 @@ fields:
   - name: area_level
     title: 地域の区分
     description: national（全国）、prefecture（都道府県）、region（地方）、overseas（海外）
-    semantic: {role: dimension}
+    dimension: categorical
   - name: prefecture_code
     title: 都道府県コード
     description: JIS X 0401 の 2 桁。都道府県の行だけに入ります
-    semantic: {role: entity, name: prefecture}
----
+    entity: {type: foreign, name: prefecture}

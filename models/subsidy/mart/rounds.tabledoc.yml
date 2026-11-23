@@ -1,6 +1,4 @@
----
-$schema: https://queria.io/schemas/table/v1.json
-table: subsidy.rounds
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
 title: Jグランツの補助金の募集回
 description: |-
   補助金の募集回です。1 行が 1 補助金の 1 回で、受付期間・事業完了期限・対象地域を持ちます。
@@ -8,9 +6,8 @@ description: |-
   - 日時はタイムゾーン付きです（原典は UTC）
   - 原典の入力誤り（3026 年など）を避けるため、2100 年より後の日時は NULL にしています
 primary_key: [round_id]
-sources:
-  - path: https://developers.digital.go.jp/documents/jgrants/api/
-fields:
+sources: [api]
+columns:
   - name: round_id
     title: 募集回 ID
     description: Jグランツの workflow の ID
@@ -35,4 +32,3 @@ fields:
   - name: project_end_at
     title: 事業完了期限
     description: タイムゾーン付き
----
