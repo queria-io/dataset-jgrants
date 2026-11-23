@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    uses: queria-io/dataset-shared/.github/workflows/sync.yml@2e64ee1015e700475c47c1c584d86cf08e8922dd
+    uses: queria-io/dataset-shared/.github/workflows/sync.yml@84cde26eceaa8beb74cce30d82da2dcb44174043
     with:
       dataset_name: jgrants
       # 初回の全件取得（詳細 3,845 件を 1 秒おき）は 1 時間 52 分かかる
